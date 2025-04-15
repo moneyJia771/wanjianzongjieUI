@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晨间计划App原型</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FFB74D;
+            --secondary-color: #FFF3E0;
+            --accent-color: #FF9800;
+            --text-color: #5D4037;
+            --light-text: #8D6E63;
+            --success-color: #81C784;
+            --warning-color: #FFD54F;
+            --danger-color: #E57373;
+            --border-radius: 16px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            padding: 20px;
+        }
+        
+        .prototype-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .prototype {
+            width: 360px;
+            height: 640px;
+            background-color: white;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow);
+            border: 1px solid #ddd;
+        }
+        
+        .prototype-title {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: 30px;
+            background-color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 12px;
+        }
+        
+        .status-bar .time {
+            font-weight: bold;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* 导航栏 */
+        .nav-bar {
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            background-color: var(--secondary-color);
+            position: relative;
+        }
+        
+        .nav-bar .title {
+            font-size: 18px;
+            font-weight: bold;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .nav-bar .back-btn {
+            font-size: 20px;
+            width: 40px;
+            text-align: left;
+        }
+        
+        .nav-bar .right-btn {
+            font-size: 20px;
+            width: 40px;
+            text-align: right;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        
+        .bottom-nav .nav-item i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .bottom-nav .nav-item.active {
+            color: var(--accent-color);
+        }
+        
+        /* 内容区域 */
+        .content {
+            height: calc(100% - 80px - 60px);
+            overflow-y: auto;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            position: relative;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* 浮动按钮 */
+        .fab {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* 计划卡片 */
+        .plan-card {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plan-card .date {
+            font-size: 12px;
+            color: var(--light-text);
+            margin-bottom: 8px;
+        }
+        
+        .plan-card .content-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .plan-card .completion {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        
+        .plan-card .completion-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .completion-high {
+            background-color: var(--success-color);
+        }
+        
+        .completion-medium {
+            background-color: var(--warning-color);
+        }
+        
+        .completion-low {
+            background-color: var(--danger-color);
+        }
+        
+        /* 新建计划 */
+        .new-plan-form {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .new-plan-form textarea {
+            flex-grow: 1;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 15px;
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .new-plan-form textarea:focus {
+            outline: none;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .new-plan-form .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+        
+        /* 晚间复盘 */
+        .review-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .review-container .plan-side,
+        .review-container .actual-side {
+            flex: 1;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .review-container .side-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .review-container .side-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .completion-slider {
+            margin: 20px 0;
+        }
+        
+        .completion-slider .slider-title {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .completion-slider input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+        }
+        
+        .completion-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .completion-value {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+        }
+        
+        /* 数据看板 */
+        .dashboard-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .dashboard-tabs .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .dashboard-tabs .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .day-view .plan-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .day-view .plan-item .completion-block {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .day-view .plan-item .plan-text {
+            flex-grow: 1;
+            font-size: 14px;
+        }
+        
+        .week-view .chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+        
+        .week-view .chart .bar {
+            width: 30px;
+            background-color: var(--primary-color);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .week-view .chart .bar .value {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .week-view .chart .bar .day {
+            position: absolute;
+            bottom: -20px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .month-view .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .month-view .calendar .day-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            background-color: white;
+        }
+        
+        .month-view .calendar .day-cell .day-number {
+            font-weight: bold;
+        }
+        
+        .month-view .calendar .weekday-header {
+            text-align: center;
+            font-size: 12px;
+            color: var(--light-text);
+            margin-bottom: 5px;
+        }
+        
+        /* 用户信息 */
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .user-info .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .user-info .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info .avatar .edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .user-info .username {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .user-info .streak {
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        
+        .user-info .vip-badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        
+        /* 设置列表 */
+        .settings-list .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-list .setting-item .left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-list .setting-item .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .settings-list .setting-item .text {
+            font-size: 16px;
+        }
+        
+        .settings-list .setting-item .right {
+            color: var(--light-text);
+        }
+        
+        /* 登录界面 */
+        .login-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 20px;
+            background-color: var(--secondary-color);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .login-header .logo {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+        
+        .login-header .slogan {
+            font-size: 16px;
+            color: var(--light-text);
+        }
+        
+        .login-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .login-methods .login-btn {
+            height: 50px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .login-methods .wechat-login {
+            background-color: #07C160;
+            color: white;
+        }
+        
+        .login-methods .qq-login {
+            background-color: #12B7F5;
+            color: white;
+        }
+        
+        .login-methods .phone-login {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+        
+        .login-methods .login-btn i {
+            margin-right: 10px;
+        }
+        
+        .login-footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        
+        .login-footer .agreement {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .login-footer .agreement input {
+            margin-right: 5px;
+        }
+        
+        .login-footer .agreement a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .login-footer .other-methods {
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .login-footer .other-methods::before,
+        .login-footer .other-methods::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        
+        .login-footer .other-methods::before {
+            left: 0;
+        }
+        
+        .login-footer .other-methods::after {
+            right: 0;
+        }
+        
+        /* 个人信息编辑 */
+        .profile-edit .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .profile-edit .form-group .label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .profile-edit .form-group .label .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            color: var(--accent-color);
+            font-size: 12px;
+        }
+        
+        .profile-edit .form-group .input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .profile-edit .form-group .input .value {
+            color: var(--light-text);
+        }
+        
+        .profile-edit .logout-btn {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* 卡通元素 */
+        .cartoon-character {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .cartoon-character img {
+            width: 200px;
+            height: auto;
+        }
+        
+        /* 饼图 */
+        .pie-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--success-color) 0% 70%,
+                var(--danger-color) 70% 100%
+            );
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .pie-chart::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        .pie-chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .pie-chart-legend .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .pie-chart-legend .legend-item .color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 5px;
+        }
+        
+        /* 卡通装饰 */
+        .cartoon-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .cartoon-decoration.top-left {
+            top: 10px;
+            left: 10px;
+        }
+        
+        .cartoon-decoration.top-right {
+            top: 10px;
+            right: 10px;
+        }
+        
+        .cartoon-decoration.bottom-left {
+            bottom: 70px;
+            left: 10px;
+        }
+        
+        .cartoon-decoration.bottom-right {
+            bottom: 70px;
+            right: 10px;
+        }
+        
+        /* 可爱的猫咪图标 */
+        .cat-icon {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        /* 猫爪背景 */
+        .paw-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .paw {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent-color);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform: rotate(45deg);
+        }
+        
+        .paw::before,
+        .paw::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+        }
+        
+        .paw::before {
+            top: -6px;
+            left: 4px;
+        }
+        
+        .paw::after {
+            top: -6px;
+            right: 4px;
+        }
+        
+        .paw-1 {
+            top: 10%;
+            left: 20%;
+        }
+        
+        .paw-2 {
+            top: 30%;
+            right: 15%;
+            transform: rotate(120deg);
+        }
+        
+        .paw-3 {
+            bottom: 25%;
+            left: 10%;
+            transform: rotate(210deg);
+        }
+        
+        .paw-4 {
+            bottom: 15%;
+            right: 25%;
+            transform: rotate(300deg);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 30px; color: var(--accent-color);">晨间计划App原型</h1>
+    
+    <div class="prototype-container">
+        <!-- 首页/计划列表 -->
+        <div>
+            <div class="prototype-title">首页 - 计划列表</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">09:15</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn"></div>
+                    <div class="title">晨间计划</div>
+                    <div class="right-btn">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="card plan-card">
+                        <div class="date">2023年6月15日 星期四</div>
+                        <div class="content-text">
+                            今天计划：1. 完成项目方案设计 2. 与客户沟通需求变更 3. 准备周会演示文稿 4. 健身1小时
+                        </div>
+                        <div class="completion">
+                            <div class="completion-indicator completion-high"></div>
+                            <span>完成度：90%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card plan-card">
+                        <div class="date">2023年6月14日 星期三</div>
+                        <div class="content-text">
+                            今天计划：1. 修复Bug三个 2. 阅读技术文档 3. 参加团队建设活动
+                        </div>
+                        <div class="completion">
+                            <div class="completion-indicator completion-medium"></div>
+                            <span>完成度：75%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card plan-card">
+                        <div class="date">2023年6月13日 星期二</div>
+                        <div class="content-text">
+                            今天计划：1. 开发新功能模块 2. 参加产品评审会 3. 健身1小时 4. 学习新技术
+                        </div>
+                        <div class="completion">
+                            <div class="completion-indicator completion-low"></div>
+                            <span>完成度：40%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="fab">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新建计划 -->
+        <div>
+            <div class="prototype-title">新建计划</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">09:20</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="title">新建计划</div>
+                    <div class="right-btn"></div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="new-plan-form">
+                        <textarea placeholder="请输入今天的计划（最多200字）..."></textarea>
+                        <div class="char-count">0/200</div>
+                        <div class="card" style="text-align: center; color: var(--light-text);">
+                            <i class="fas fa-info-circle"></i> 点击空白处自动保存
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 晚间复盘 -->
+        <div>
+            <div class="prototype-title">晚间复盘</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">20:30</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="title">今日复盘</div>
+                    <div class="right-btn"></div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="review-container">
+                        <div class="plan-side">
+                            <div class="side-title">晨间计划</div>
+                            <div class="side-content">
+                                1. 完成项目方案设计<br>
+                                2. 与客户沟通需求变更<br>
+                                3. 准备周会演示文稿<br>
+                                4. 健身1小时
+                            </div>
+                        </div>
+                        <div class="actual-side">
+                            <div class="side-title">实际完成</div>
+                            <div class="side-content">
+                                1. 完成项目方案设计<br>
+                                2. 与客户沟通需求变更<br>
+                                3. 准备周会演示文稿（部分）<br>
+                                4. 未完成
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="completion-slider">
+                        <div class="slider-title">完成度评估</div>
+                        <input type="range" min="0" max="100" value="70">
+                        <div class="completion-value">70%</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold;">今日时间分配</div>
+                        <div class="pie-chart"></div>
+                        <div class="pie-chart-legend">
+                            <div class="legend-item">
+                                <div class="color" style="background-color: var(--success-color);"></div>
+                                <span>计划内：70%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="color" style="background-color: var(--danger-color);"></div>
+                                <span>计划外：30%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据看板 - 日视图 -->
+        <div>
+            <div class="prototype-title">数据看板 - 日视图</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">10:45</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn"></div>
+                    <div class="title">数据看板</div>
+                    <div class="right-btn">
+                        <i class="fas fa-calendar-days"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="dashboard-tabs">
+                        <div class="tab active">日</div>
+                        <div class="tab">周</div>
+                        <div class="tab">月</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="font-weight: bold; margin-bottom: 10px;">2023年6月15日 星期四</div>
+                        <div class="day-view">
+                            <div class="plan-item">
+                                <div class="completion-block" style="background-color: var(--success-color);"></div>
+                                <div class="plan-text">完成项目方案设计</div>
+                            </div>
+                            <div class="plan-item">
+                                <div class="completion-block" style="background-color: var(--success-color);"></div>
+                                <div class="plan-text">与客户沟通需求变更</div>
+                            </div>
+                            <div class="plan-item">
+                                <div class="completion-block" style="background-color: var(--warning-color);"></div>
+                                <div class="plan-text">准备周会演示文稿</div>
+                            </div>
+                            <div class="plan-item">
+                                <div class="completion-block" style="background-color: var(--danger-color);"></div>
+                                <div class="plan-text">健身1小时</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold;">今日完成度</div>
+                        <div class="pie-chart"></div>
+                        <div class="pie-chart-legend">
+                            <div class="legend-item">
+                                <div class="color" style="background-color: var(--success-color);"></div>
+                                <span>已完成：70%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="color" style="background-color: var(--danger-color);"></div>
+                                <span>未完成：30%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item active">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据看板 - 周视图 -->
+        <div>
+            <div class="prototype-title">数据看板 - 周视图</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">10:50</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn"></div>
+                    <div class="title">数据看板</div>
+                    <div class="right-btn">
+                        <i class="fas fa-calendar-days"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="dashboard-tabs">
+                        <div class="tab">日</div>
+                        <div class="tab active">周</div>
+                        <div class="tab">月</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="font-weight: bold; margin-bottom: 10px; text-align: center;">2023年第24周</div>
+                        <div class="week-view">
+                            <div class="chart">
+                                <div class="bar" style="height: 60%;">
+                                    <div class="value">60%</div>
+                                    <div class="day">一</div>
+                                </div>
+                                <div class="bar" style="height: 75%;">
+                                    <div class="value">75%</div>
+                                    <div class="day">二</div>
+                                </div>
+                                <div class="bar" style="height: 40%;">
+                                    <div class="value">40%</div>
+                                    <div class="day">三</div>
+                                </div>
+                                <div class="bar" style="height: 90%;">
+                                    <div class="value">90%</div>
+                                    <div class="day">四</div>
+                                </div>
+                                <div class="bar" style="height: 80%;">
+                                    <div class="value">80%</div>
+                                    <div class="day">五</div>
+                                </div>
+                                <div class="bar" style="height: 30%;">
+                                    <div class="value">30%</div>
+                                    <div class="day">六</div>
+                                </div>
+                                <div class="bar" style="height: 20%;">
+                                    <div class="value">20%</div>
+                                    <div class="day">日</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold;">本周平均完成度</div>
+                        <div style="text-align: center; font-size: 36px; font-weight: bold; color: var(--accent-color);">
+                            56.4%
+                        </div>
+                        <div style="text-align: center; color: var(--light-text); margin-top: 10px;">
+                            比上周提高了 5.2%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item active">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据看板 - 月视图 -->
+        <div>
+            <div class="prototype-title">数据看板 - 月视图</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">10:55</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn"></div>
+                    <div class="title">数据看板</div>
+                    <div class="right-btn">
+                        <i class="fas fa-calendar-days"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="dashboard-tabs">
+                        <div class="tab">日</div>
+                        <div class="tab">周</div>
+                        <div class="tab active">月</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="font-weight: bold; margin-bottom: 10px; text-align: center;">2023年6月</div>
+                        <div class="month-view">
+                            <div class="calendar">
+                                <div class="weekday-header">一</div>
+                                <div class="weekday-header">二</div>
+                                <div class="weekday-header">三</div>
+                                <div class="weekday-header">四</div>
+                                <div class="weekday-header">五</div>
+                                <div class="weekday-header">六</div>
+                                <div class="weekday-header">日</div>
+                                
+                                <!-- 第一周 -->
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.1);">
+                                    <div class="day-number">1</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.3);">
+                                    <div class="day-number">2</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.5);">
+                                    <div class="day-number">3</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.7);">
+                                    <div class="day-number">4</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.2);">
+                                    <div class="day-number">5</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.1);">
+                                    <div class="day-number">6</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.1);">
+                                    <div class="day-number">7</div>
+                                </div>
+                                
+                                <!-- 第二周 -->
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.6);">
+                                    <div class="day-number">8</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.8);">
+                                    <div class="day-number">9</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.4);">
+                                    <div class="day-number">10</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.9);">
+                                    <div class="day-number">11</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.8);">
+                                    <div class="day-number">12</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.3);">
+                                    <div class="day-number">13</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.2);">
+                                    <div class="day-number">14</div>
+                                </div>
+                                
+                                <!-- 第三周 -->
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.6);">
+                                    <div class="day-number">15</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.7);">
+                                    <div class="day-number">16</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.4);">
+                                    <div class="day-number">17</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.9);">
+                                    <div class="day-number">18</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.8);">
+                                    <div class="day-number">19</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.3);">
+                                    <div class="day-number">20</div>
+                                </div>
+                                <div class="day-cell" style="background-color: rgba(129, 199, 132, 0.2);">
+                                    <div class="day-number">21</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold;">本月统计</div>
+                        <div style="display: flex; justify-content: space-around; text-align: center;">
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">21</div>
+                                <div style="color: var(--light-text); font-size: 12px;">打卡天数</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">68.5%</div>
+                                <div style="color: var(--light-text); font-size: 12px;">平均完成度</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">90%</div>
+                                <div style="color: var(--light-text); font-size: 12px;">最高完成度</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item active">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人中心 -->
+        <div>
+            <div class="prototype-title">个人中心</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">11:10</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn"></div>
+                    <div class="title">个人中心</div>
+                    <div class="right-btn">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="avatar">
+                            <img src="https://via.placeholder.com/80" alt="用户头像">
+                            <div class="edit">
+                                <i class="fas fa-pen"></i>
+                            </div>
+                        </div>
+                        <div class="username">
+                            追梦少年
+                            <span class="vip-badge">VIP</span>
+                        </div>
+                        <div class="streak">已坚持打卡 68 天</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-around; text-align: center;">
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">68</div>
+                                <div style="color: var(--light-text); font-size: 12px;">打卡天数</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">72.3%</div>
+                                <div style="color: var(--light-text); font-size: 12px;">平均完成度</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--accent-color);">21</div>
+                                <div style="color: var(--light-text); font-size: 12px;">本月打卡</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="text">提醒和声音</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="text">关于我们</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-share-alt"></i>
+                                </div>
+                                <div class="text">分享给好友</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="text">设置</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <i class="fas fa-list-check"></i>
+                        <span>计划</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-star"></i>
+                        <span>专注</span>
+                    </div>
+                    <div class="nav-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>统计</span>
+                    </div>
+                    <div class="nav-item active">
+                        <i class="fas fa-user"></i>
+                        <span>我的</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 设置页面 -->
+        <div>
+            <div class="prototype-title">设置</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">11:15</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="title">设置</div>
+                    <div class="right-btn"></div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="text">账号与安全</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="text">通知设置</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div class="text">深色模式</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-toggle-off"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-file-contract"></i>
+                                </div>
+                                <div class="text">用户协议</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="text">隐私政策</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="left">
+                                <div class="icon">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                                <div class="text">注销账号</div>
+                            </div>
+                            <div class="right">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 0 15px;">
+                        <div class="logout-btn">退出登录</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 登录页面 -->
+        <div>
+            <div class="prototype-title">登录</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">09:00</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="login-container">
+                    <div class="login-header">
+                        <div class="cartoon-character">
+                            <img src="https://via.placeholder.com/200x150" alt="卡通形象">
+                        </div>
+                        <div class="logo">Hello! <i class="fas fa-sun"></i></div>
+                        <div class="slogan">专注学习一起变好</div>
+                    </div>
+                    
+                    <div class="login-methods">
+                        <div class="login-btn wechat-login">
+                            <i class="fab fa-weixin"></i> 微信登录
+                        </div>
+                        <div class="login-btn qq-login">
+                            <i class="fab fa-qq"></i> QQ登录
+                        </div>
+                        <div class="login-btn phone-login">
+                            <i class="fas fa-mobile-alt"></i> 手机号登录
+                        </div>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <div class="agreement">
+                            <input type="checkbox" id="agree">
+                            <label for="agree">我已阅读并同意 <a href="#">《用户协议》</a> 和 <a href="#">《隐私政策》</a></label>
+                        </div>
+                        <div class="other-methods">其他登录方式</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人信息编辑 -->
+        <div>
+            <div class="prototype-title">个人信息编辑</div>
+            <div class="prototype">
+                <div class="status-bar">
+                    <div class="carrier">中国移动</div>
+                    <div class="time">11:20</div>
+                    <div class="icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                
+                <div class="nav-bar">
+                    <div class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="title">修改个人信息</div>
+                    <div class="right-btn">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <div class="paw-bg">
+                        <div class="paw paw-1"></div>
+                        <div class="paw paw-2"></div>
+                        <div class="paw paw-3"></div>
+                        <div class="paw paw-4"></div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="avatar">
+                            <img src="https://via.placeholder.com/80" alt="用户头像">
+                            <div class="edit">
+                                <i class="fas fa-pen"></i>
+                            </div>
+                        </div>
+                        <div class="username">
+                            追梦少年
+                            <i class="fas fa-pen" style="font-size: 12px; margin-left: 5px;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-edit">
+                        <div class="form-group">
+                            <div class="label">
+                                <div class="icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <span>UID</span>
+                            </div>
+                            <div class="input">
+                                <span>81584</span>
+                                <i class="fas fa-copy"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="label">
+                                <div class="icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <span>手机号码</span>
+                            </div>
+                            <div class="input">
+                                <span class="value">未绑定</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="label">
+                                <div class="icon">
+                                    <i class="fab fa-qq"></i>
+                                </div>
+                                <span>QQ号</span>
+                            </div>
+                            <div class="input">
+                                <span class="value">未绑定</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="label">
+                                <div class="icon">
+                                    <i class="fab fa-weixin"></i>
+                                </div>
+                                <span>微信号</span>
+                            </div>
+                            <div class="input">
+                                <span class="value">已绑定</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="label">
+                                <div class="icon">
+                                    <i class="fab fa-apple"></i>
+                                </div>
+                                <span>Apple ID</span>
+                            </div>
+                            <div class="input">
+                                <span class="value">未绑定</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 这里可以添加一些简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 示例：点击底部导航切换激活状态
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 示例：点击标签页切换
+            const tabs = document.querySelectorAll('.dashboard-tabs .tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 示例：滑块值显示
+            const sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const valueDisplay = this.parentElement.querySelector('.completion-value');
+                    if (valueDisplay) {
+                        valueDisplay.textContent = this.value + '%';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
